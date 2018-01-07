@@ -10,7 +10,16 @@ import UIKit
 
 class ViewController: UIViewController
 {
-    lazy var game = Concentration(num: (UIButtons.count + 1) / 2)
+    //lazy var game = Concentration(num: (UIButtons.count + 1) / 2)
+    private lazy var game = Concentration(num: num)
+    
+    var num: Int
+    {
+        get
+        {
+            return (UIButtons.count + 1) / 2
+        }
+    }
     
     //var flipCount: Int = 0
     var flipCount = 0
@@ -25,7 +34,7 @@ class ViewController: UIViewController
     
     @IBOutlet var UIButtons: [UIButton]!
     
-    var emojiChoicesOrigin = ["🐷","🐎","🐂","🐘","🐱","🎩","🐶","👻","🦊","🐸"]
+    private var emojiChoicesOrigin = ["🐷","🐎","🐂","🐘","🐱","🎩","🐶","👻","🦊","🐸"]
     var emojiChoices = ["🐷","🐎","🐂","🐘","🐱","🎩","🐶","👻","🦊","🐸"]
     
     
@@ -42,7 +51,7 @@ class ViewController: UIViewController
         updateViewFromModel()
     }
     
-    @IBAction func TouchCard(_ sender: UIButton)
+    @IBAction private func TouchCard(_ sender: UIButton)
     {
         if let cardNumber = UIButtons.index(of: sender)
         {
@@ -60,7 +69,7 @@ class ViewController: UIViewController
         }
     }
     
-    func updateViewFromModel()
+    private func updateViewFromModel()
     {
         for index in UIButtons.indices
         {
@@ -87,8 +96,8 @@ class ViewController: UIViewController
     {
         if emoji[card.identifier] == nil, emojiChoices.count > 0
         {
-            let randomIndex = Int( arc4random_uniform(UInt32(emojiChoices.count)) )
-            emoji[card.identifier] = emojiChoices.remove(at: randomIndex)
+            //let randomIndex = Int( arc4random_uniform(UInt32(emojiChoices.count)) )
+            emoji[card.identifier] = emojiChoices.remove(at: emojiChoices.count.arc4random)
         }
         
         return emoji[card.identifier] ?? "?"
@@ -96,3 +105,14 @@ class ViewController: UIViewController
 
 }
 
+extension Int
+{
+    var arc4random: Int
+    {
+        if self > 0
+        {
+            return Int( arc4random_uniform(UInt32(self)) )
+        }
+        return -Int( arc4random_uniform(UInt32(abs(self))) )
+    }
+}

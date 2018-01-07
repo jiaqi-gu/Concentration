@@ -8,14 +8,43 @@
 
 import Foundation
 
-class Concentration
+struct Concentration
 {
-    var cards = [Card]()
+    private(set) var cards = [Card]()
     
     var indexOfOneAndFaceUpCard: Int?
-    
-    func chooseCard(at index: Int) -> Bool
     {
+        get
+        {
+            var foundIndex: Int?
+            for index in cards.indices
+            {
+                if cards[index].isFaceUp
+                {
+                    if foundIndex == nil
+                    {
+                        foundIndex = index
+                    }
+                    else
+                    {
+                        return nil
+                    }
+                }
+            }
+            return foundIndex
+        }
+        set
+        {
+            for index in cards.indices
+            {
+                cards[index].isFaceUp = (index == newValue)
+            }
+        }
+    }
+    
+    mutating func chooseCard(at index: Int) -> Bool
+    {
+        assert(cards.indices.contains(index), "Concentration.chooseCard(at \(index)): chosen index not in the cards")
         if !cards[index].isMatched
         {
             if let matchIndex = indexOfOneAndFaceUpCard, matchIndex != index
@@ -30,16 +59,17 @@ class Concentration
                 //usleep(500000)
                 //cards[matchIndex].isFaceUp = false
                 //cards[index].isFaceUp = false
-                indexOfOneAndFaceUpCard = nil
+                
+                //indexOfOneAndFaceUpCard = nil
             }
             else
             {
                 // either no cards or 2 cards face up
-                for flipDownIndex in cards.indices
-                {
-                    cards[flipDownIndex].isFaceUp = false
-                }
-                cards[index].isFaceUp = true
+//                for flipDownIndex in cards.indices
+//                {
+//                    cards[flipDownIndex].isFaceUp = false
+//                }
+//                cards[index].isFaceUp = true
                 indexOfOneAndFaceUpCard = index
             }
             return true
@@ -49,6 +79,7 @@ class Concentration
     
     init(num: Int)
     {
+        assert(num > 0, "At least 1 card")
         for _ in 1...num
         {
             let card = Card()
